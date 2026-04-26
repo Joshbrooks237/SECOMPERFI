@@ -6,11 +6,11 @@ export const FULL_BANK: Question[] = [...A_PLUS_QUESTIONS, ...SECURITY_PLUS_QUES
 
 export const QUESTION_COUNT = FULL_BANK.length;
 
-if (A_PLUS_QUESTIONS.length !== 40 || SECURITY_PLUS_QUESTIONS.length !== 40) {
-  throw new Error(
-    `Expected 40 A+ and 40 Security+ questions (got ${A_PLUS_QUESTIONS.length} / ${SECURITY_PLUS_QUESTIONS.length})`,
-  );
+const AP = A_PLUS_QUESTIONS.length;
+const SY = SECURITY_PLUS_QUESTIONS.length;
+if (AP !== 60 || SY !== 60) {
+  throw new Error(`Expected 60 A+ and 60 Security+ questions (got ${AP} / ${SY})`);
 }
-if (QUESTION_COUNT !== 80) {
-  throw new Error(`Expected 80 questions, found ${QUESTION_COUNT}`);
+if (QUESTION_COUNT !== 120) {
+  throw new Error(`Expected 120 questions, found ${QUESTION_COUNT}`);
 }

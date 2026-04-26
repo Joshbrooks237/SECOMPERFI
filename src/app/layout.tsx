@@ -11,7 +11,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "A+ vs Security+ Diagnostic",
   description:
-    "80-question CompTIA A+ (220-1201/1202) vs Security+ (SY0-701) diagnostic with domain-weighted scoring and exam-order verdict.",
+    "120-question CompTIA A+ (220-1201/1202) vs Security+ (SY0-701) diagnostic with domain-weighted scoring and exam-order verdict.",
 };
 
 export default function RootLayout({

@@ -161,7 +161,7 @@ export function DiagnosticApp() {
 
   const introBody = useMemo(
     () =>
-      `${total} MCQ segments (40x 220-1201/1202-style vectors, 40x SY0-701). Weighted by objective emphasis. Study guidance only — not affiliated with CompTIA.`,
+      `${total} MCQ segments (60x 220-1201/1202-style vectors, 60x SY0-701). Weighted by objective emphasis. Study guidance only — not affiliated with CompTIA.`,
     [total],
   );
 

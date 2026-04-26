@@ -8,7 +8,7 @@
 
 ## What this is
 
-A **Next.js / TypeScript** application posing as a **compromised classification terminal**. It administers **eighty** multiple-choice probes—**forty** mapped to **CompTIA A+** objective families (220-1201/1202 style) and **forty** to **Security+ SY0-701** domains—then computes **domain-weighted** scores and emits a **verdict** on exam sequencing.
+A **Next.js / TypeScript** application posing as a **compromised classification terminal**. It administers **one hundred twenty** multiple-choice probes—**sixty** mapped to **CompTIA A+** objective families (220-1201/1202 style) and **sixty** to **Security+ SY0-701** domains—then computes **domain-weighted** scores and emits a **verdict** on exam sequencing.
 
 It is **study software**. It is **not** CompTIA. It does **not** certify you. It merely… *measures the anomaly.*
 
