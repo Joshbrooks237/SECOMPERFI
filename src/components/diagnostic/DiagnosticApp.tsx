@@ -7,11 +7,7 @@ import { computeResults } from "@/lib/scoring";
 import type { Question, QuizResults } from "@/types/quiz";
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import { DomainBreakdownChart } from "./DomainBreakdownChart";
-import {
-  MatrixBufferProgress,
-  MatrixGlitchHeading,
-  MatrixTypewriter,
-} from "./MatrixEffects";
+import { MatrixBufferProgress, MatrixTypewriter } from "./MatrixEffects";
 
 type Phase = "intro" | "quiz" | "results";
 
@@ -23,15 +19,15 @@ function examPathTag(q: Question) {
   return q.exam === "a-plus" ? "[220-1201]" : "[SY0-701]";
 }
 
-/** Display-only clearance line (mirrors verdict thresholds; does not change scoring). */
-function cosmeticClearanceVector(r: QuizResults): string {
+/** Display-only summary line (mirrors verdict thresholds; does not change scoring). */
+function readinessSummaryLine(r: QuizResults): string {
   const s = r.securityPlusWeightedPercent;
   const a = r.aPlusWeightedPercent;
-  if (s >= 85) return "CLEARANCE_LEVEL: SECURITY+ // MAX";
-  if (s >= 70 && s < 85) return "CLEARANCE_LEVEL: SECURITY+ // ELEVATED";
-  if (s < 70 && a >= 80) return "CLEARANCE_LEVEL: A+ // FOUNDATION_LOCK";
-  if (s < 70 && a < 70) return "CLEARANCE_LEVEL: A+ // BASELINE";
-  return "CLEARANCE_LEVEL: SPLIT // RECALIBRATE";
+  if (s >= 85) return "Security+ weighted: strong (≥85%)";
+  if (s >= 70 && s < 85) return "Security+ weighted: approaching exam readiness";
+  if (s < 70 && a >= 80) return "A+ stronger than Security+ — consider A+ first";
+  if (s < 70 && a < 70) return "Both tracks under 70% — build A+ fundamentals first";
+  return "Security+ needs work; A+ moderate — focus Security+ domains";
 }
 
 export function DiagnosticApp() {
@@ -126,9 +122,9 @@ export function DiagnosticApp() {
     const text = buildExportBlob();
     try {
       await navigator.clipboard.writeText(text);
-      setExportStatus("> UPLINK_OK // PAYLOAD_COPIED_TO_CLIPBOARD");
+      setExportStatus("Copied to clipboard.");
     } catch {
-      setExportStatus("> UPLINK_FAIL // USE_DOWNLOAD_STREAM");
+      setExportStatus("Copy failed — try download.");
     }
   };
 
@@ -141,7 +137,7 @@ export function DiagnosticApp() {
     a.download = `comptia-diagnostic-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    setExportStatus("> ARCHIVE_SPAWNED // LOCAL_DOWNLOAD");
+    setExportStatus("Download started.");
   };
 
   const shareResults = async () => {
@@ -150,19 +146,19 @@ export function DiagnosticApp() {
     try {
       if (navigator.share) {
         await navigator.share({ title: "CompTIA diagnostic", text });
-        setExportStatus("> BROADCAST // SHARE_COMPLETE");
+        setExportStatus("Shared.");
       } else {
         await navigator.clipboard.writeText(text);
-        setExportStatus("> FALLBACK // SUMMARY_COPIED");
+        setExportStatus("Summary copied (share not available).");
       }
     } catch {
-      setExportStatus("> BROADCAST_ABORTED");
+      setExportStatus("Share cancelled or failed.");
     }
   };
 
   const introBody = useMemo(
     () =>
-      `${total} MCQ segments (60x 220-1201/1202-style vectors, 60x SY0-701). Weighted by objective emphasis. Study guidance only — not affiliated with CompTIA.`,
+      `${total} multiple-choice questions (60 A+–style, 60 Security+–style). Domain-weighted scoring. Practice only — not affiliated with CompTIA.`,
     [total],
   );
 
@@ -179,14 +175,11 @@ export function DiagnosticApp() {
     >
       <header className="matrix-decrypt-block mb-8 border-b border-matrix-dim pb-6" style={decryptStyle(0)}>
         <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-[#00ff41]/55">
-          {"// unauthorized_session // root_breach"}
+          Practice · diagnostic
         </p>
-        <div className="mt-2">
-          <MatrixGlitchHeading
-            text="COMPTIA.DIAGNOSTIC // A_PLUS_VS_SECURITY_PLUS"
-            className="text-lg text-[#00ff41] sm:text-2xl"
-          />
-        </div>
+        <h1 className="mt-2 font-mono text-lg font-semibold tracking-tight text-[#00ff41] sm:text-2xl">
+          A+ vs Security+ diagnostic
+        </h1>
         {phase === "intro" ? (
           <MatrixTypewriter
             text={introBody}
@@ -196,7 +189,7 @@ export function DiagnosticApp() {
           />
         ) : (
           <p className="mt-3 font-mono text-xs leading-relaxed text-[#00ff41]/55 sm:text-sm">
-            {"// SESSION_ACTIVE // UNAUTHORIZED_BUFFER_LOCK // DO_NOT_DISCONNECT"}
+            Session in progress — avoid refreshing the page.
           </p>
         )}
       </header>
@@ -204,11 +197,11 @@ export function DiagnosticApp() {
       {phase === "intro" && (
         <section className="matrix-decrypt-block flex flex-1 flex-col gap-6" style={decryptStyle(1)}>
           <div className="border border-matrix-dim bg-matrix-deep/90 p-4 text-xs leading-relaxed text-[#00ff41]/85">
-            <p className="text-[10px] text-[#00ff41]/45">:: ROUTINE_MANIFEST ::</p>
-            <ul className="mt-3 space-y-2 font-mono">
-              <li>{"> ACK_ALL_SEGMENTS // per-answer decrypt + rationale"}</li>
-              <li>{"> SCORE_MATRIX // domain-weighted A+ / SY0-701"}</li>
-              <li>{"> VERDICT_STREAM // sequence advisory (heuristic)"}</li>
+            <p className="text-[10px] text-[#00ff41]/45">What you get</p>
+            <ul className="mt-3 list-inside list-disc space-y-2 font-mono">
+              <li>Immediate feedback and explanation after each answer</li>
+              <li>Domain-weighted scores for A+ and Security+</li>
+              <li>Heuristic verdict on what to study or schedule next</li>
             </ul>
           </div>
           <div className="flex max-w-xl flex-col gap-3">
@@ -217,14 +210,14 @@ export function DiagnosticApp() {
               onClick={startQuiz}
               className="group w-full border border-[#00ff41] bg-[#001a00] px-4 py-3 text-left font-mono text-sm text-[#00ff41] transition-colors hover:bg-[#003b00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00ff41]"
             >
-              <span className="text-[#00ff41]">{"> INITIALIZE_DIAGNOSTIC"}</span>
+              <span className="text-[#00ff41]">Start diagnostic</span>
               <span className="matrix-cursor inline" aria-hidden />
             </button>
             <Link
               href="/flashcards"
               className="inline-flex w-full border border-matrix-dim bg-matrix-deep px-4 py-3 font-mono text-sm text-[#00ff41] transition-colors hover:border-[#00ff41]/60 hover:bg-[#003b00]/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00ff41]"
             >
-              <span>{"> INITIALIZE_FLASHCARD_MODE"}</span>
+              <span>Open port flashcards</span>
               <span className="matrix-cursor inline" aria-hidden />
             </Link>
           </div>
@@ -238,19 +231,19 @@ export function DiagnosticApp() {
               <span className="tracking-wide text-[#00ff41]">
                 {examPathTag(current)} Q_{padSeq(currentIndex + 1)} of_{padSeq(total)}
               </span>
-              <span className="text-[#003b00]">:: corrupted_record_pull ::</span>
+              <span className="text-[#003b00]">Question</span>
             </div>
             <div className="mt-3">
               <MatrixBufferProgress
                 percent={progress}
-                label={`SEGMENT_OFFSET // ${examPathTag(current)} // STREAM_ACTIVE`}
+                label={`Progress · ${examPathTag(current)}`}
               />
             </div>
           </div>
 
           <div className="border border-matrix-dim bg-[#000800]/90 p-4 sm:p-5">
             <div className="mb-3 font-mono text-[10px] uppercase tracking-wider text-[#00ff41]/50">
-              :: OBJ_REF :: {current.objectiveRef}
+              Objective · {current.objectiveRef}
             </div>
             <div className="min-h-[3rem] border-l-2 border-[#003b00] pl-3">
               <MatrixTypewriter
@@ -305,10 +298,10 @@ export function DiagnosticApp() {
                 }`}
               >
                 <p className="font-bold uppercase tracking-[0.2em]">
-                  {isCorrect ? ">> ACCESS_GRANTED" : ">> BREACH_DETECTED"}
+                  {isCorrect ? "Correct" : "Incorrect"}
                 </p>
                 <p className="mt-2 text-[11px] uppercase tracking-widest text-[#00ff41]/45">
-                  {isCorrect ? ":: AUTH_TOKEN_ACCEPTED ::" : ":: INTRUSION_SIGNATURE ::"}{" "}
+                  {isCorrect ? "Explanation" : "Review"}
                 </p>
                 <p className={`mt-2 ${isCorrect ? "text-[#00ff41]/90" : "text-[#ff8888]"}`}>
                   {current.explanation}
@@ -322,7 +315,7 @@ export function DiagnosticApp() {
                 onClick={goNext}
                 className="mt-5 w-full border border-[#00ff41] bg-[#001a00] px-4 py-3 text-left font-mono text-sm text-[#00ff41] hover:bg-[#003b00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00ff41] sm:w-auto"
               >
-                {currentIndex >= total - 1 ? "> DECRYPT_FINAL_REPORT" : "> LOAD_NEXT_SEGMENT"}
+                {currentIndex >= total - 1 ? "View results" : "Next question"}
                 <span className="matrix-cursor inline" aria-hidden />
               </button>
             )}
@@ -337,13 +330,13 @@ export function DiagnosticApp() {
             style={decryptStyle(0)}
           >
             <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-[#00ff41]/45">
-              {":: classified_report // decrypt_stream ::"}
+              Results summary
             </p>
             <p className="mt-3 font-mono text-xs font-semibold uppercase tracking-wider text-[#00ff41]">
-              {cosmeticClearanceVector(results)}
+              {readinessSummaryLine(results)}
             </p>
             <h2 className="mt-4 font-mono text-base font-bold uppercase leading-snug text-[#00ff41] sm:text-lg">
-              :: ACCESS_DECISION ::
+              Verdict
             </h2>
             <p className="mt-2 font-mono text-sm font-semibold leading-snug text-[#00ff41]">
               {results.verdictTitle}
@@ -365,7 +358,7 @@ export function DiagnosticApp() {
                 {Math.round(results.aPlusWeightedPercent)}%
               </p>
               <p className="mt-1 font-mono text-[10px] text-[#00ff41]/40">
-                {"DOMAIN_WEIGHT // 220-1201/1202 EMPHASIS"}
+                Domain weights · 220-1201 / 220-1202 emphasis
               </p>
             </div>
             <div className="border border-matrix-dim bg-[#000800] p-4">
@@ -376,17 +369,17 @@ export function DiagnosticApp() {
                 {Math.round(results.securityPlusWeightedPercent)}%
               </p>
               <p className="mt-1 font-mono text-[10px] text-[#00ff41]/40">
-                {"DOMAIN_WEIGHT // SY0-701 EMPHASIS"}
+                Domain weights · SY0-701 emphasis
               </p>
             </div>
           </div>
 
           <div className="matrix-decrypt-block" style={decryptStyle(2)}>
             <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-[#00ff41]/70">
-              {"::"} DOMAIN_DECRYPT_GRAPH {"::"}
+              Domain breakdown
             </h3>
             <p className="mt-1 font-mono text-[10px] text-[#00ff41]/40">
-              {"BARS = PCT_CORRECT_IN_DOMAIN // <70% = WEAK_SIGNAL"}
+              Bars = percent correct per domain · under 70% flagged weak
             </p>
             <div className="mt-3">
               <DomainBreakdownChart rows={results.perDomain} />
@@ -399,7 +392,7 @@ export function DiagnosticApp() {
               style={decryptStyle(3)}
             >
               <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-[#ff5555]">
-                {":: ANOMALY_LIST // WEAK_DOMAINS ::"}
+                Weak domains
               </h3>
               <ul className="mt-2 space-y-1 font-mono text-xs text-[#ff8888]">
                 {results.weakDomainsDetail.map((line) => (
@@ -418,28 +411,28 @@ export function DiagnosticApp() {
               onClick={copyExport}
               className="border border-matrix-dim bg-matrix-deep px-4 py-2.5 text-left font-mono text-xs text-[#00ff41] hover:border-[#00ff41] hover:bg-[#003b00]/50"
             >
-              {"> EXPORT_CLIPBOARD // JSON"}
+              Copy results (JSON)
             </button>
             <button
               type="button"
               onClick={downloadExport}
               className="border border-matrix-dim bg-matrix-deep px-4 py-2.5 text-left font-mono text-xs text-[#00ff41] hover:border-[#00ff41] hover:bg-[#003b00]/50"
             >
-              {"> SPAWN_ARCHIVE // JSON"}
+              Download JSON
             </button>
             <button
               type="button"
               onClick={shareResults}
               className="border border-matrix-dim bg-matrix-deep px-4 py-2.5 text-left font-mono text-xs text-[#00ff41] hover:border-[#00ff41] hover:bg-[#003b00]/50"
             >
-              {"> BROADCAST_SUMMARY"}
+              Share summary
             </button>
             <button
               type="button"
               onClick={restart}
               className="border border-[#00ff41] bg-[#001a00] px-4 py-2.5 text-left font-mono text-xs font-semibold text-[#00ff41] hover:bg-[#003b00]"
             >
-              {"> REINITIALIZE_SESSION"}
+              Start over
             </button>
           </div>
           {exportStatus && (

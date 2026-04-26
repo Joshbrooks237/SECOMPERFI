@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Flashcard Mode | SECOMPERFI",
-  description: "Matrix terminal port drill — PORT_TO_SERVICE and SERVICE_TO_PORT rapid fire.",
+  description: "Port and service flashcards — port-to-service and service-to-port drill with timer.",
 };
 
 export default function FlashcardsPage() {

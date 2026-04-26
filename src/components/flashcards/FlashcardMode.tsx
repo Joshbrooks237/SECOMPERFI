@@ -168,9 +168,7 @@ export function FlashcardMode() {
   );
 
   const promptLine =
-    drillMode === "PORT_TO_SERVICE"
-      ? ":: PORT_TO_SERVICE // RESOLVE_PROTOCOL ::"
-      : ":: SERVICE_TO_PORT // RESOLVE_SOCKET ::";
+    drillMode === "PORT_TO_SERVICE" ? "Port → pick the service" : "Service → pick the port";
 
   const frontContent =
     current &&
@@ -180,7 +178,7 @@ export function FlashcardMode() {
         <p className="mt-4 font-mono text-3xl font-bold tracking-tight text-[#00ff41] sm:text-4xl">
           {current.portDisplay}
         </p>
-        <p className="mt-3 font-mono text-xs text-[#00ff41]/60">{"//"} SELECT_SERVICE</p>
+        <p className="mt-3 font-mono text-xs text-[#00ff41]/60">Choose the service</p>
       </div>
     ) : (
       <div className="text-center">
@@ -188,16 +186,14 @@ export function FlashcardMode() {
         <p className="mt-4 px-2 font-mono text-base font-semibold leading-snug text-[#00ff41] sm:text-lg">
           {current.serviceName}
         </p>
-        <p className="mt-3 font-mono text-xs text-[#00ff41]/60">{"//"} SELECT_PORT</p>
+        <p className="mt-3 font-mono text-xs text-[#00ff41]/60">Choose the port</p>
       </div>
     ));
 
   const backContent =
     current && (
       <div className="text-center">
-        <p className="font-mono text-[10px] uppercase tracking-widest text-[#00ff41]/45">
-          :: UPLINK_DECRYPT ::
-        </p>
+        <p className="font-mono text-[10px] uppercase tracking-widest text-[#00ff41]/45">Answer</p>
         <p className="mt-3 font-mono text-sm text-[#00ff41]">
           <span className="text-[#00ff41]/55">PORT</span> {current.portDisplay}
         </p>
@@ -213,29 +209,29 @@ export function FlashcardMode() {
     <div className="relative z-10 mx-auto flex min-h-full max-w-3xl flex-col px-3 py-8 sm:px-5 matrix-crt-ambient">
       <header className="mb-8 border-b border-matrix-dim pb-6">
         <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-[#00ff41]/55">
-          {"// FLASHCARD_MODE // PORT_MATRIX_ONLY"}
+          Port flashcards
         </p>
-        <h1 className="mt-2 font-mono text-lg font-bold uppercase tracking-tight text-[#00ff41] sm:text-2xl">
-          SECOMPERFI // FLASHCARD_DRILL
+        <h1 className="mt-2 font-mono text-lg font-semibold tracking-tight text-[#00ff41] sm:text-2xl">
+          Port / service drill
         </h1>
         <Link
           href="/"
           className="mt-3 inline-block font-mono text-xs text-[#00ff41]/60 underline decoration-matrix-dim underline-offset-4 hover:text-[#00ff41]"
         >
-          {"<< RETURN_TO_DIAGNOSTIC"}
+          ← Back to diagnostic
         </Link>
       </header>
 
       {phase === "intro" && (
         <section className="flex flex-1 flex-col gap-6">
           <div className="border border-matrix-dim bg-matrix-deep/90 p-4 font-mono text-xs leading-relaxed text-[#00ff41]/85">
-            <p className="text-[10px] text-[#00ff41]/45">:: MANIFEST ::</p>
-            <ul className="mt-3 space-y-2">
-              <li>{">"} DECK_SIZE // 30 PORT VECTORS</li>
-              <li>{">"} TIMER // {TIMER_SEC}s PER CARD // RAPID_FIRE</li>
-              <li>{">"} STREAK // CONSECUTIVE CLEARANCES</li>
-              <li>{">"} REPEAT_PASS // MISSED_CARDS_REQUEUED_END_OF_RUN</li>
-              <li>{">"} WEAK_FLAG // 2+ MISSES</li>
+            <p className="text-[10px] text-[#00ff41]/45">How it works</p>
+            <ul className="mt-3 list-inside list-disc space-y-2">
+              <li>30 common ports and services</li>
+              <li>{TIMER_SEC}s per card</li>
+              <li>Streak tracks consecutive correct answers</li>
+              <li>Missed cards repeat once at the end of the deck</li>
+              <li>Flagged weak if you miss the same card twice or more</li>
             </ul>
           </div>
 
@@ -272,7 +268,7 @@ export function FlashcardMode() {
             onClick={startSession}
             className="w-full max-w-xl border border-[#00ff41] bg-[#001a00] px-4 py-3 text-left font-mono text-sm text-[#00ff41] transition-colors hover:bg-[#003b00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00ff41]"
           >
-            <span>{"> INITIALIZE_FLASHCARD_MODE"}</span>
+            <span>Start drill</span>
             <span className="matrix-cursor inline" aria-hidden />
           </button>
         </section>
@@ -281,13 +277,15 @@ export function FlashcardMode() {
       {phase === "play" && current && mcq && (
         <section className="flex flex-1 flex-col gap-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2 font-mono text-[10px] text-[#00ff41]/65 sm:text-xs">
-            <span>{`PASS_${passId} // CARD_${idx + 1}_OF_${deckOrder.length}`}</span>
-            <span>{`STREAK_${streak} // PEAK_${maxStreak}`}</span>
+            <span>
+              {passId === 0 ? "Main deck" : "Reviewing misses"} · Card {idx + 1} of {deckOrder.length}
+            </span>
+            <span>{`Streak ${streak} · Best ${maxStreak}`}</span>
           </div>
 
           <div className="font-mono text-[10px] text-[#00ff41]/70">
             <div className="mb-1 flex justify-between">
-              <span>{"// BUFFER_DRAIN //"}</span>
+              <span>Time left</span>
               <span>
                 T_{String(timeLeft).padStart(2, "0")}s
                 <span className="matrix-cursor-block inline" aria-hidden />
@@ -325,11 +323,11 @@ export function FlashcardMode() {
               }`}
             >
               <p className="font-bold uppercase tracking-[0.25em]">
-                {lastCorrect === true ? ">> ACCESS_GRANTED" : ">> BREACH_DETECTED"}
+                {lastCorrect === true ? "Correct" : "Incorrect or time out"}
               </p>
               {lastCorrect !== true && (
                 <p className="mt-2 text-xs leading-relaxed">
-                  <span className="text-[#00ff41]/55">{"//"} REQUIRED_UPLINK :: </span>
+                  <span className="text-[#00ff41]/55">Expected · </span>
                   {drillMode === "PORT_TO_SERVICE" ? (
                     <>
                       {current.serviceName}
@@ -384,7 +382,7 @@ export function FlashcardMode() {
               onClick={goNext}
               className="max-w-xl border border-[#00ff41] bg-[#001a00] px-4 py-3 text-left font-mono text-sm text-[#00ff41] hover:bg-[#003b00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00ff41]"
             >
-              {"> COMMIT_NEXT_CARD"}
+              Next card
               <span className="matrix-cursor inline" aria-hidden />
             </button>
           )}
@@ -394,17 +392,15 @@ export function FlashcardMode() {
       {phase === "summary" && (
         <section className="flex flex-1 flex-col gap-5 pb-16 font-mono">
           <div className="border border-matrix-dim bg-matrix-deep/80 p-5">
-            <p className="text-[10px] uppercase tracking-[0.4em] text-[#00ff41]/45">:: SESSION_SUMMARY ::</p>
-            <p className="mt-3 text-sm text-[#00ff41]">
-              PEAK_STREAK // {maxStreak}
-            </p>
-            <p className="mt-1 text-xs text-[#00ff41]/60">FINAL_STREAK // {streak}</p>
+            <p className="text-[10px] uppercase tracking-[0.4em] text-[#00ff41]/45">Session summary</p>
+            <p className="mt-3 text-sm text-[#00ff41]">Best streak · {maxStreak}</p>
+            <p className="mt-1 text-xs text-[#00ff41]/60">Current streak · {streak}</p>
           </div>
 
           {weakIds.length > 0 ? (
             <div className="border border-[#ff0000]/45 bg-[#120000]/70 p-4">
               <p className="text-xs font-bold uppercase tracking-widest text-[#ff5555]">
-                {":: WEAK_VECTORS // 2+ MISSES ::"}
+                Ports to review (2+ misses)
               </p>
               <ul className="mt-2 space-y-2 text-xs text-[#ffaaaa]">
                 {weakIds.map((id) => {
@@ -412,14 +408,14 @@ export function FlashcardMode() {
                   if (!c) return null;
                   return (
                     <li key={id}>
-                      {`> ${c.portDisplay} // ${c.serviceName} // MISS_${missCount[id]}`}
+                      {`${c.portDisplay} · ${c.serviceName} · ${missCount[id]} misses`}
                     </li>
                   );
                 })}
               </ul>
             </div>
           ) : (
-            <p className="text-xs text-[#00ff41]/55">{"// NO_WEAK_VECTORS // UNDER_2_MISSES_EACH"}</p>
+            <p className="text-xs text-[#00ff41]/55">No ports flagged weak (under 2 misses each).</p>
           )}
 
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -432,14 +428,14 @@ export function FlashcardMode() {
               }}
               className="border border-matrix-dim bg-matrix-deep px-4 py-2.5 text-left text-xs text-[#00ff41] hover:border-[#00ff41]"
             >
-              {"<< RETURN_TO_MODE_SELECT"}
+              Change mode
             </button>
             <button
               type="button"
               onClick={startSession}
               className="border border-[#00ff41] bg-[#001a00] px-4 py-2.5 text-left text-xs font-semibold text-[#00ff41] hover:bg-[#003b00]"
             >
-              {"> REINITIALIZE_DECK"}
+              New deck
             </button>
           </div>
         </section>

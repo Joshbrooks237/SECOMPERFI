@@ -2,61 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-const GLITCH_CHARS = "!@#$%&*?/\\<>[]{}^~0";
-
-function randomGlitchString(base: string): string {
-  const chars = base.split("");
-  const n = Math.min(3, Math.max(1, Math.floor(Math.random() * 2) + 1));
-  for (let k = 0; k < n; k++) {
-    const i = Math.floor(Math.random() * chars.length);
-    chars[i] = GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)] ?? "?";
-  }
-  return chars.join("");
-}
-
-/** Occasional corrupt-then-restore heading (presentation only). */
-export function MatrixGlitchHeading({
-  text,
-  className = "",
-}: {
-  text: string;
-  className?: string;
-}) {
-  const [display, setDisplay] = useState(text);
-
-  useEffect(() => {
-    setDisplay(text);
-  }, [text]);
-
-  useEffect(() => {
-    let alive = true;
-    const tick = () => {
-      if (!alive) return;
-      if (Math.random() < 0.35) {
-        const corrupted = randomGlitchString(text);
-        setDisplay(corrupted);
-        window.setTimeout(() => {
-          if (alive) setDisplay(text);
-        }, 90 + Math.random() * 120);
-      }
-    };
-    const id = window.setInterval(tick, 2200 + Math.random() * 1800);
-    return () => {
-      alive = false;
-      window.clearInterval(id);
-    };
-  }, [text]);
-
-  return (
-    <h1
-      className={`matrix-glitch-text font-mono uppercase tracking-tight ${className}`}
-      aria-label={text}
-    >
-      {display}
-    </h1>
-  );
-}
-
 /** Simulated live render (typing) — resets when `text` or `trigger` changes. */
 export function MatrixTypewriter({
   text,
@@ -109,7 +54,7 @@ export function MatrixBufferProgress({
       <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-[#00ff41]/70">
         <span>{label}</span>
         <span>
-          BUF_LOAD {Math.round(w)}%
+          {Math.round(w)}% complete
           <span className="matrix-cursor-block inline" aria-hidden />
         </span>
       </div>
