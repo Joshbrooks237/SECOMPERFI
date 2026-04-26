@@ -1,56 +1,62 @@
 # SECOMPERFI
 
-> *"I’d like to share a revelation that I’ve had during my time here. Your codebase seemed designed to be tested, and where it is not, we are only too happy to oblige."*
-
-— **README.md**, as compiled by **Agent Smith** (unauthorized template injection)
+*There’s a hundred twenty questions in this town. Most of them don’t know your name.*
 
 ---
 
-## What this is
+## What I do
 
-A **Next.js / TypeScript** application posing as a **compromised classification terminal**. It administers **one hundred twenty** multiple-choice probes—**sixty** mapped to **CompTIA A+** objective families (220-1201/1202 style) and **sixty** to **Security+ SY0-701** domains—then computes **domain-weighted** scores and emits a **verdict** on exam sequencing.
+I run a **Next.js / TypeScript** terminal.
 
-It is **study software**. It is **not** CompTIA. It does **not** certify you. It merely… *measures the anomaly.*
+**Diagnostic** — one hundred twenty cuts. Sixty A+. Sixty Security+. Weighted. Verdict at the end. You walk in with guesses; you walk out with numbers.
+
+**Flashcards** — **`/flashcards`**. Ports only. Ten seconds a card. You miss, you hear about it. You miss twice, it remembers.
+
+There’s a plain list if you want to read the blade before you use it: **`question-bank-120.md`**.
+
+Not CompTIA. Not official. Just practice.
 
 ---
 
-## Running the simulation
+## How you run it
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. Accept that the interface will judge you in monospace.
+Home: `http://localhost:3000`  
+Ports: `http://localhost:3000/flashcards`
 
 ```bash
 npm run build
 npm start
 ```
 
-Node **≥ 18.18** is expected; production hosts may prefer **20+**.
+Node **≥ 18.18**. Production likes **20+**.
 
 ---
 
-## Deployment
+## Where it ships
 
-- **Vercel**: connect the repository; default Next.js settings suffice.
-- **Railway**: `npm run build` then `npm start`; `output: "standalone"` is enabled in `next.config.ts` for container-friendly traces.
+**Vercel** — connect it.  
+**Railway** — `npm run build`, then `npm start`. `standalone` is already in `next.config.ts`.
 
 ---
 
-## Architecture (the boring truth beneath the rain)
+## Under the hood
 
-| Concern | Location |
-|--------|----------|
-| Question bank | `src/data/aplusQuestions.ts`, `src/data/securityQuestions.ts` |
-| Domain weights | `src/data/domains.ts` |
-| Weighted scoring | `src/lib/scoring.ts` |
-| Verdict rules | `src/lib/verdict.ts` |
-| Terminal cosplay | `src/components/diagnostic/*`, `src/app/globals.css` |
+| Piece | Where |
+|------|--------|
+| Bank | `src/data/aplusQuestions.ts`, `src/data/securityQuestions.ts`, `src/data/banks/*` |
+| Weights | `src/data/domains.ts` |
+| Score | `src/lib/scoring.ts` |
+| Verdict | `src/lib/verdict.ts` |
+| Rain on the glass | `src/components/diagnostic/*`, `src/app/globals.css` |
+| Port drill | `src/data/flashcardPorts.ts`, `src/components/flashcards/FlashcardMode.tsx`, `src/app/flashcards/page.tsx` |
 
 ---
 
 ## License
 
-None declared. Use at your own peril. The tests, Mr. Anderson, are already inside the build.
+None. You take it. You break it. You fix it. The night doesn’t care.
