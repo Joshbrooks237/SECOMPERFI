@@ -1,0 +1,245 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --matrix-black: #000000;
+  --matrix-phosphor: #00ff41;
+  --matrix-dim: #003b00;
+  --matrix-dim-2: #001a00;
+  --matrix-red: #ff0000;
+  --matrix-bg: var(--matrix-black);
+  --matrix-fg: var(--matrix-phosphor);
+}
+
+html.matrix-terminal,
+html.matrix-terminal body {
+  background: var(--matrix-black);
+  color: var(--matrix-phosphor);
+}
+
+/* CRT scanlines — full viewport overlay */
+.matrix-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.34) 0px,
+    rgba(0, 0, 0, 0.34) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+/* Subtle vignette + noise feel */
+.matrix-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+@keyframes matrix-crt-flicker {
+  0% {
+    opacity: 1;
+  }
+  5% {
+    opacity: 0.92;
+  }
+  10% {
+    opacity: 1;
+  }
+  28% {
+    opacity: 0.98;
+  }
+  30% {
+    opacity: 0.88;
+  }
+  32% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0.97;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.matrix-crt-flicker {
+  animation: matrix-crt-flicker 0.45s ease-out;
+}
+
+@keyframes matrix-crt-ambient {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.985;
+  }
+}
+
+.matrix-crt-ambient {
+  animation: matrix-crt-ambient 4s ease-in-out infinite;
+}
+
+@keyframes matrix-cursor-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Blinking underscore (prompt / typing) */
+.matrix-cursor::after {
+  content: "_";
+  animation: matrix-cursor-blink 1s step-end infinite;
+  color: var(--matrix-phosphor);
+  margin-left: 1px;
+}
+
+/* Solid block cursor (buffer load line) */
+.matrix-cursor-block::after {
+  content: "█";
+  animation: matrix-cursor-blink 1s step-end infinite;
+  color: var(--matrix-phosphor);
+  margin-left: 2px;
+}
+
+@keyframes matrix-phosphor-flash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.8);
+    background-color: rgba(0, 255, 65, 0.12);
+  }
+  100% {
+    box-shadow: 0 0 24px 2px rgba(0, 255, 65, 0);
+    background-color: rgba(0, 59, 0, 0.35);
+  }
+}
+
+.matrix-access-flash {
+  animation: matrix-phosphor-flash 0.55s ease-out;
+}
+
+@keyframes matrix-breach {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    filter: none;
+  }
+  10% {
+    transform: translate(-2px, 1px);
+    filter: drop-shadow(2px 0 0 rgba(255, 0, 0, 0.9));
+  }
+  20% {
+    transform: translate(2px, -1px);
+    filter: drop-shadow(-2px 0 0 rgba(255, 0, 0, 0.7));
+  }
+  30% {
+    transform: translate(-1px, -1px);
+  }
+  40% {
+    transform: translate(1px, 1px);
+  }
+}
+
+.matrix-breach-shake {
+  animation: matrix-breach 0.35s ease-out;
+}
+
+@keyframes matrix-glitch-skew {
+  0%,
+  100% {
+    transform: skewX(0deg);
+    text-shadow: none;
+  }
+  20% {
+    transform: skewX(-0.6deg);
+    text-shadow: 2px 0 #ff0000, -2px 0 #00ff41;
+  }
+  40% {
+    transform: skewX(0.4deg);
+    text-shadow: -1px 0 #ff0000;
+  }
+}
+
+.matrix-glitch-text {
+  animation: matrix-glitch-skew 3.2s ease-in-out infinite;
+}
+
+@keyframes matrix-decrypt {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.matrix-decrypt-block {
+  opacity: 0;
+  animation: matrix-decrypt 0.55s ease-out forwards;
+}
+
+@keyframes matrix-red-flicker {
+  0%,
+  100% {
+    border-color: rgba(255, 0, 0, 0.95);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
+  }
+  40% {
+    border-color: rgba(255, 0, 0, 0.35);
+    box-shadow: 0 0 20px 1px rgba(255, 0, 0, 0.35);
+  }
+  55% {
+    border-color: rgba(255, 0, 0, 1);
+    box-shadow: 0 0 8px 0 rgba(255, 0, 0, 0.6);
+  }
+}
+
+.matrix-red-flicker {
+  animation: matrix-red-flicker 0.4s ease-in-out 3;
+}
+
+/* Progress buffer “tube” */
+.matrix-buffer-track {
+  background: repeating-linear-gradient(
+    90deg,
+    #001a00 0px,
+    #001a00 4px,
+    #000800 4px,
+    #000800 8px
+  );
+  border: 1px solid #003b00;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.9);
+}
+
+.matrix-buffer-fill {
+  background: linear-gradient(180deg, #00ff41 0%, #00aa2a 50%, #006622 100%);
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.35);
+  transition: width 0.28s steps(8, end);
+}
+
+body {
+  background: var(--matrix-black);
+  color: var(--matrix-phosphor);
+}
+
+::selection {
+  background: #003b00;
+  color: #00ff41;
+}
