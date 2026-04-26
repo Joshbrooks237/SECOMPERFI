@@ -243,3 +243,56 @@ body {
   background: #003b00;
   color: #00ff41;
 }
+
+/* Flashcard 3D flip */
+.matrix-flip-scene {
+  perspective: 1400px;
+}
+
+.matrix-flip-card {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.matrix-flip-card.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.matrix-flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.matrix-flip-face.back {
+  transform: rotateY(180deg);
+}
+
+@keyframes matrix-flip-glitch-once {
+  0% {
+    filter: blur(0);
+    opacity: 1;
+  }
+  25% {
+    filter: blur(3px);
+    opacity: 0.88;
+    text-shadow: 2px 0 #ff0000, -2px 0 #00ff41;
+  }
+  50% {
+    filter: blur(1px);
+    opacity: 0.95;
+  }
+  100% {
+    filter: blur(0);
+    opacity: 1;
+    text-shadow: none;
+  }
+}
+
+.matrix-flip-glitch-once {
+  animation: matrix-flip-glitch-once 0.48s ease-out;
+}

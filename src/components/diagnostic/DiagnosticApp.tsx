@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FULL_BANK, QUESTION_COUNT } from "@/data/allQuestions";
 import { shuffleArray } from "@/lib/shuffle";
 import { computeResults } from "@/lib/scoring";
@@ -210,14 +211,23 @@ export function DiagnosticApp() {
               <li>{"> VERDICT_STREAM // sequence advisory (heuristic)"}</li>
             </ul>
           </div>
-          <button
-            type="button"
-            onClick={startQuiz}
-            className="group w-full max-w-xl border border-[#00ff41] bg-[#001a00] px-4 py-3 text-left font-mono text-sm text-[#00ff41] transition-colors hover:bg-[#003b00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00ff41]"
-          >
-            <span className="text-[#00ff41]">{"> INITIALIZE_DIAGNOSTIC"}</span>
-            <span className="matrix-cursor inline" aria-hidden />
-          </button>
+          <div className="flex max-w-xl flex-col gap-3">
+            <button
+              type="button"
+              onClick={startQuiz}
+              className="group w-full border border-[#00ff41] bg-[#001a00] px-4 py-3 text-left font-mono text-sm text-[#00ff41] transition-colors hover:bg-[#003b00] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00ff41]"
+            >
+              <span className="text-[#00ff41]">{"> INITIALIZE_DIAGNOSTIC"}</span>
+              <span className="matrix-cursor inline" aria-hidden />
+            </button>
+            <Link
+              href="/flashcards"
+              className="inline-flex w-full border border-matrix-dim bg-matrix-deep px-4 py-3 font-mono text-sm text-[#00ff41] transition-colors hover:border-[#00ff41]/60 hover:bg-[#003b00]/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00ff41]"
+            >
+              <span>{"> INITIALIZE_FLASHCARD_MODE"}</span>
+              <span className="matrix-cursor inline" aria-hidden />
+            </Link>
+          </div>
         </section>
       )}
 
