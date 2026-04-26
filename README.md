@@ -1,62 +1,54 @@
-# SECOMPERFI
+# FLASH / SECOMPERFI
 
-*There’s a hundred twenty questions in this town. Most of them don’t know your name.*
+Same codebase: **port flashcards** at **`/flashcards`** (30 services, 10s timer, streak, repeat on weak ports) and a **120-question** diagnostic on `/` (60 A+ / 60 Security+, domain-weighted scoring, verdict). Not CompTIA official — practice only.
 
----
-
-## What I do
-
-I run a **Next.js / TypeScript** terminal.
-
-**Diagnostic** — one hundred twenty cuts. Sixty A+. Sixty Security+. Weighted. Verdict at the end. You walk in with guesses; you walk out with numbers.
-
-**Flashcards** — **`/flashcards`**. Ports only. Ten seconds a card. You miss, you hear about it. You miss twice, it remembers.
-
-There’s a plain list if you want to read the blade before you use it: **`question-bank-120.md`**.
-
-Not CompTIA. Not official. Just practice.
+Question text export: **`question-bank-120.md`**.
 
 ---
 
-## How you run it
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Home: `http://localhost:3000`  
-Ports: `http://localhost:3000/flashcards`
+- Diagnostic: `http://localhost:3000`
+- Flashcards: `http://localhost:3000/flashcards`
 
 ```bash
 npm run build
 npm start
 ```
 
-Node **≥ 18.18**. Production likes **20+**.
+Node **≥ 18.18** (production: **20+** recommended).
 
 ---
 
-## Where it ships
+## Deploy
 
-**Vercel** — connect it.  
-**Railway** — `npm run build`, then `npm start`. `standalone` is already in `next.config.ts`.
+**Vercel** — connect the repo.  
+**Railway** — `npm run build`, then `npm start`. `output: 'standalone'` is set in `next.config.ts`.
 
 ---
 
-## Under the hood
+## Layout
 
-| Piece | Where |
+| Area | Paths |
 |------|--------|
-| Bank | `src/data/aplusQuestions.ts`, `src/data/securityQuestions.ts`, `src/data/banks/*` |
-| Weights | `src/data/domains.ts` |
-| Score | `src/lib/scoring.ts` |
+| Question banks | `src/data/aplusQuestions.ts`, `src/data/securityQuestions.ts`, `src/data/banks/*` |
+| Domain weights | `src/data/domains.ts` |
+| Scoring | `src/lib/scoring.ts` |
 | Verdict | `src/lib/verdict.ts` |
-| Rain on the glass | `src/components/diagnostic/*`, `src/app/globals.css` |
+| Diagnostic UI | `src/components/diagnostic/*`, `src/app/globals.css` |
 | Port drill | `src/data/flashcardPorts.ts`, `src/components/flashcards/FlashcardMode.tsx`, `src/app/flashcards/page.tsx` |
 
 ---
 
 ## License
 
-None. You take it. You break it. You fix it. The night doesn’t care.
+None stated — use at your own risk.
+
+---
+
+Alternate README tone (neo-noir / “director’s cut”): **[README.GOSLING.md](README.GOSLING.md)**.
